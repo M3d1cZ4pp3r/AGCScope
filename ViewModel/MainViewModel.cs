@@ -161,10 +161,10 @@ namespace AGCScope.ViewModel
         [RelayCommand(CanExecute = nameof(CanConnect))]
         public async Task ConnectToNASSP()
         {
-            if(image is not null)
+            if(Image is not null)
             {
                 ConnectionStatus = "Connecting...";
-                await Task.Run(() => agc.Connect(image));
+                await Task.Run(() => agc.Connect(Image));
                 CheckConnection();
                 UpdateWatchedSymbols();
 
