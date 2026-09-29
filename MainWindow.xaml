@@ -1,0 +1,108 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AGCScope"
+        xmlns:ViewModel="clr-namespace:AGCScope.ViewModel" x:Name="wnd_Main" x:Class="AGCScope.MainWindow"
+        mc:Ignorable="d"
+        Title="AGCScope" Height="452" Width="800">
+    <Window.DataContext>
+        <ViewModel:MainViewModel/>
+    </Window.DataContext>
+
+    <Grid>
+        <Button x:Name="btn_LoadRope" Content="Load Rope" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Click="btn_LoadRope_Click" Width="115"/>
+        <Label x:Name="lbl_LoadRope" Content="" HorizontalAlignment="Left" Margin="130,7,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="btn_LoadSymtab" Content="Load Symbol Table" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Click="btn_LoadSymtab_Click" Width="115"/>
+        <Label x:Name="lbl_LoadSymtab" Content="" HorizontalAlignment="Left" Margin="130,32,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="tb_SymbolSearch" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Margin="10,63,10,0" TextWrapping="Wrap" VerticalAlignment="Top"
+                 PreviewKeyDown="tb_SymbolSearch_PreviewKeyDown"/>
+        <Popup PlacementTarget="{Binding ElementName=tb_SymbolSearch}"
+               Placement="Bottom"
+               IsOpen="{Binding IsSearchOpen}"
+               StaysOpen="False">
+
+            <Border Background="White"
+                    BorderBrush="Gray"
+                    BorderThickness="1">
+
+                <ListView x:Name="lv_SearchResults" ItemsSource="{Binding SearchResults}"
+                          SelectedItem="{Binding SelectedSearchResult}"
+                          Width="800"
+                          MaxHeight="300" MouseDoubleClick="lv_SearchResults_MouseDoubleClick">
+                    <ListView.InputBindings>
+                        <KeyBinding Key="Enter"
+                                    Command="{Binding AddWatchCommand}" />
+                    </ListView.InputBindings>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Symbol"
+                                            Width="140"
+                                            DisplayMemberBinding="{Binding Name}" />
+                            <GridViewColumn Header="Type"
+                                            Width="100"
+                                            DisplayMemberBinding="{Binding Type}" />
+                            <GridViewColumn Header="Memory"
+                                            Width="90"
+                                            DisplayMemberBinding="{Binding MemoryType}"/>
+                            <GridViewColumn Header="Address"
+                                            Width="120"
+                                            DisplayMemberBinding="{Binding AddressText}" />
+                            <GridViewColumn Header="File"
+                                            Width="180"
+                                            DisplayMemberBinding="{Binding FileName}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Border>
+        </Popup>
+        <DataGrid x:Name="dg_Watch" Margin="10,86,10,10"
+                  ItemsSource="{Binding WatchedSymbols}"
+                  SelectedItem="{Binding SelectedWatch}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="False"
+                  CanUserAddRows="False"
+                  HeadersVisibility="Column">
+
+            <DataGrid.InputBindings>
+                <KeyBinding Key="Delete"
+                            Command="{Binding RemoveWatchCommand}" />
+            </DataGrid.InputBindings>
+            <DataGrid.Columns>
+
+                <DataGridTextColumn Header="Symbol"
+                                    Binding="{Binding Name}"
+                                    IsReadOnly="True"
+                                    Width="150" />
+
+                <DataGridTextColumn Header="Address"
+                                    Binding="{Binding AddressText}"
+                                    IsReadOnly="True"
+                                    Width="120" />
+
+                <DataGridTextColumn Header="Words"
+                                    Binding="{Binding WordCount,
+                                                      UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTemplateColumn Header="Format" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox
+                                ItemsSource="{Binding AvailableFormats}"
+                                SelectedItem="{Binding ValueFormat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Value"
+                                    Binding="{Binding ValueText}"
+                                    IsReadOnly="True"
+                                    Width="*" />
+
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button x:Name="btn_Connect" Content="Connect NASSP" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Width="115" Command="{Binding ConnectToNASSPCommand}"/>
+        <Label x:Name="lbl_NASSPStatus" Content="{Binding ConnectionStatus}" HorizontalAlignment="Right" Margin="0,35,43,0" VerticalAlignment="Top" RenderTransformOrigin="-0.99,0.646" Width="82"/>
+
+    </Grid>
+</Window>
